@@ -1,26 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCatDto } from './dto/create-cat.dto';
-import { UpdateCatDto } from './dto/update-cat.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Cat } from './entities/cat.entity';
 
 @Injectable()
 export class CatsService {
-  create(createCatDto: CreateCatDto) {
-    return 'This action adds a new cat';
+  constructor(@InjectModel('Cat') private catModel: Model<Cat>) {}
+
+  async create(cat: Cat): Promise<Cat> {
+    const createdCat = new this.catModel(cat);
+    return await createdCat.save();
   }
 
-  findAll() {
-    return `This action returns all cats`;
+  async findAll(): Promise<Cat[]> {
+    return await this.catModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cat`;
+  async findOne(id: string): Promise<Cat> {
+    return await this.catModel.findOne({ _id: id });
   }
 
-  update(id: number, updateCatDto: UpdateCatDto) {
-    return `This action updates a #${id} cat`;
+  async update(id: string, cat: Cat): Promise<Cat> {
+    return await this.catModel.findByIdAndUpdate(id, cat, {
+      new: true,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cat`;
+  async delete(id: string): Promise<Cat> {
+    return await this.catModel.findByIdAndRemove(id);
   }
 }
