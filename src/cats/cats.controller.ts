@@ -9,19 +9,19 @@ import {
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
-import { Cat } from './entities/cat.entity';
+import { UpdateCatDto } from './dto/update-cat.dto';
 
 @Controller('cats')
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
   @Post()
-  create(@Body() createCatDto: CreateCatDto): Promise<Cat> {
+  create(@Body() createCatDto: CreateCatDto): Promise<CreateCatDto> {
     return this.catsService.create(createCatDto);
   }
 
   @Get()
-  findAll(): Promise<Cat[]> {
+  findAll(): Promise<CreateCatDto[]> {
     // throw new HttpException(
     //   {
     //     status: HttpStatus.FORBIDDEN,
@@ -33,20 +33,20 @@ export class CatsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id): Promise<Cat> {
+  async findOne(@Param('id') id): Promise<CreateCatDto> {
     return this.catsService.findOne(id);
   }
 
   @Put(':id')
   update(
-    @Body() updateCatDto: CreateCatDto,
+    @Body() updateCatDto: UpdateCatDto,
     @Param('id') id: string,
-  ): Promise<Cat> {
+  ): Promise<UpdateCatDto> {
     return this.catsService.update(id, updateCatDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<Cat> {
+  remove(@Param('id') id: string) {
     return this.catsService.delete(id);
   }
 }

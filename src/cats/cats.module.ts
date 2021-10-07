@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { CatsService } from './cats.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { CatsController } from './cats.controller';
-import { MongooseModule } from '@nestjs/mongoose';
-import { CatSchema } from './schemas/cats.schema';
+import { CatsService } from './cats.service';
+import { CatEntity } from './entities/cat.entity';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Cat', schema: CatSchema }])],
+  imports: [TypeOrmModule.forFeature([CatEntity])],
   controllers: [CatsController],
   providers: [CatsService],
+  exports: [TypeOrmModule],
 })
 export class CatsModule {}
