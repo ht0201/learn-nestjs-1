@@ -4,27 +4,34 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { UserEntity } from 'src/users/entities/user.entity';
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
+import { CatEntity } from './entities/cat.entity';
 
 @Controller('cats')
-@UseGuards(AuthGuard())
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
   @Post()
-  create(@Body() createCatDto: CreateCatDto): Promise<CreateCatDto> {
-    return this.catsService.create(createCatDto);
+  @UseGuards(AuthGuard())
+  create(
+    @Body() createCatDto: CreateCatDto,
+    @GetUser() user: UserEntity,
+  ): Promise<CreateCatDto> {
+    return this.catsService.createSer(createCatDto, user);
   }
 
   @Get()
-  findAll(): Promise<CreateCatDto[]> {
+  findAll(): Promise<CatEntity[]> {
     // throw new HttpException(
     //   {
     //     status: HttpStatus.FORBIDDEN,
@@ -36,20 +43,20 @@ export class CatsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id): Promise<CreateCatDto> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<CatEntity> {
     return this.catsService.findOne(id);
   }
 
   @Put(':id')
   update(
     @Body() updateCatDto: UpdateCatDto,
-    @Param('id') id: string,
-  ): Promise<UpdateCatDto> {
-    return this.catsService.update(id, updateCatDto);
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<CatEntity> {
+    return this.catsService.updateSer(id, updateCatDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.catsService.delete(id);
+  delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.catsService.deleteSer(id);
   }
 }

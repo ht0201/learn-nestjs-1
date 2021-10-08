@@ -1,9 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from 'src/users/entities/user.entity';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
-export class CatEntity {
+export class CatEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id?: string;
+  id?: number;
 
   @Column()
   name: string;
@@ -13,4 +20,7 @@ export class CatEntity {
 
   @Column()
   breed: string;
+
+  @ManyToOne((type) => UserEntity, (user) => user.cats, { eager: false })
+  user: UserEntity;
 }

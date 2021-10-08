@@ -1,5 +1,11 @@
-import * as bcrypt from 'bcrypt';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { CatEntity } from 'src/cats/entities/cat.entity';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 // @Unique(['email])
@@ -18,6 +24,9 @@ export class UserEntity extends BaseEntity {
 
   @Column()
   public salt: string;
+
+  @OneToMany((type) => CatEntity, (cat) => cat.user, { eager: true })
+  cats: CatEntity[];
 
   /*  async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);

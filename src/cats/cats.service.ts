@@ -1,8 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from 'src/users/entities/user.entity';
 import { CatRepository } from './cats.repository';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
+import { CatEntity } from './entities/cat.entity';
 
 @Injectable()
 export class CatsService {
@@ -11,37 +18,35 @@ export class CatsService {
     private catsRepository: CatRepository,
   ) {}
 
-  async create(cat: CreateCatDto): Promise<CreateCatDto> {
-    const newCat = await this.catsRepository.create(cat);
-    await this.catsRepository.save(newCat);
-    return newCat;
+  async createSer(cat: CreateCatDto, user: UserEntity): Promise<CatEntity> {
+    return await this.catsRepository.createCat(cat, user);
   }
 
-  async findAll(): Promise<CreateCatDto[]> {
+  async findAll(): Promise<CatEntity[]> {
     return await this.catsRepository.find();
   }
 
-  async findOne(id: string): Promise<CreateCatDto> {
+  async findOne(id: number): Promise<CatEntity> {
     const cat = await this.catsRepository.findOne(id);
-    if (cat) return cat;
-
-    throw new HttpException('Cat not found', HttpStatus.NOT_FOUND);
+    if (!cat) {
+      throw new HttpException('Cat not found', HttpStatus.NOT_FOUND);
+    }
+    return cat;
   }
 
-  async update(id: string, cat: UpdateCatDto): Promise<UpdateCatDto> {
+  async updateSer(id: number, cat: UpdateCatDto): Promise<CatEntity> {
     await this.catsRepository.update(id, cat);
     const updateCat = await this.catsRepository.findOne(id);
-    if (updateCat) {
-      return updateCat;
+    if (!updateCat) {
+      throw new HttpException('Cat not found', HttpStatus.NOT_FOUND);
     }
-
-    throw new HttpException('Cat not found', HttpStatus.NOT_FOUND);
+    return updateCat;
   }
 
-  async delete(id: string): Promise<void> {
+  async deleteSer(id: number): Promise<void> {
     const deleteRes = await this.catsRepository.delete(id);
     if (!deleteRes.affected) {
-      throw new HttpException('Cat not found', HttpStatus.NOT_FOUND);
+      throw new NotFoundException(`Cat ${id} not found`);
     }
   }
 }

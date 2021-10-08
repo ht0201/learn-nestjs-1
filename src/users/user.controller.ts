@@ -17,6 +17,7 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private userService: UserService) {}
 
+  /* signUp : auth/signup */
   @Post()
   @UsePipes(ValidationPipe)
   create(@Body() createUserDto: CreateUserDto): Promise<CreateUserDto> {
