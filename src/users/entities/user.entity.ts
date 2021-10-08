@@ -1,5 +1,4 @@
 import * as bcrypt from 'bcrypt';
-import { IsEmpty } from 'class-validator';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -20,8 +19,8 @@ export class UserEntity extends BaseEntity {
   @Column()
   public salt: string;
 
-  async validatePassword(password: string): Promise<boolean> {
+  /*  async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
     return hash === this.password;
-  }
+  } */
 }

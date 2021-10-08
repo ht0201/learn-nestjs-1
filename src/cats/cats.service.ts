@@ -1,16 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
+import { CatRepository } from './cats.repository';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
-import { CatEntity } from './entities/cat.entity';
 
 @Injectable()
 export class CatsService {
   constructor(
-    @InjectRepository(CatEntity)
-    private catsRepository: Repository<CatEntity>,
+    @InjectRepository(CatRepository)
+    private catsRepository: CatRepository,
   ) {}
 
   async create(cat: CreateCatDto): Promise<CreateCatDto> {
