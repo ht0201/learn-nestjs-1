@@ -21,6 +21,10 @@ export class CatEntity extends BaseEntity {
   @Column()
   breed: string;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @ManyToOne((type) => UserEntity, (user) => user.cats, { eager: false })
   user: UserEntity;
+
+  @Column()
+  userId: number;
 }

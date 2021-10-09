@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -14,15 +15,15 @@ import { GetUser } from 'src/auth/get-user.decorator';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
+import { GetCatFilterDto } from './dto/get-cats-filter';
 import { UpdateCatDto } from './dto/update-cat.dto';
 import { CatEntity } from './entities/cat.entity';
-
+@UseGuards(AuthGuard())
 @Controller('cats')
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
   create(
     @Body() createCatDto: CreateCatDto,
     @GetUser() user: UserEntity,
@@ -31,19 +32,20 @@ export class CatsController {
   }
 
   @Get()
-  findAll(): Promise<CatEntity[]> {
-    // throw new HttpException(
-    //   {
-    //     status: HttpStatus.FORBIDDEN,
-    //     error: 'This is a custom message',
-    //   },
-    //   HttpStatus.FORBIDDEN,
-    // );
-    return this.catsService.findAll();
+  findAll(
+    @Query() filterDto: GetCatFilterDto,
+    @GetUser() user: UserEntity,
+  ): Promise<CatEntity[]> {
+    if (Object.keys(filterDto).length) {
+      console.log(user);
+      return this.catsService.getCatWithFilter(filterDto, user);
+    } else {
+      return this.catsService.getAllCats();
+    }
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<CatEntity> {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<CatEntity> {
     return this.catsService.findOne(id);
   }
 

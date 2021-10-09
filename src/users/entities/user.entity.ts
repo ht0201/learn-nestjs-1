@@ -25,6 +25,7 @@ export class UserEntity extends BaseEntity {
   @Column()
   public salt: string;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @OneToMany((type) => CatEntity, (cat) => cat.user, { eager: true })
   cats: CatEntity[];
 

@@ -21,16 +21,16 @@ export class AuthService {
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
     // check emal with db
-    const { email } = await this.userRepository.authenticatedUserPassword(
+    const user = await this.userRepository.authenticatedUserPassword(
       authCredentialsDto,
     );
 
-    if (!email) {
+    if (!user.email) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     // create token by field email
-    const payload: JwtPayload = { email };
+    const payload: AuthCredentialsDto = { ...user };
     const accessToken = await this.jwtService.sign(payload);
     return { accessToken };
   }
