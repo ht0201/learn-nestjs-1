@@ -45,8 +45,11 @@ export class CatsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<CatEntity> {
-    return this.catsService.findOne(id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: UserEntity,
+  ): Promise<CatEntity> {
+    return this.catsService.getCatById(id, user);
   }
 
   @Put(':id')

@@ -61,8 +61,10 @@ export class CatsService {
     return await this.catsRepository.find();
   }
 
-  async findOne(id: number): Promise<CatEntity> {
-    const cat = await this.catsRepository.findOne(id);
+  async getCatById(id: number, user: UserEntity): Promise<CatEntity> {
+    const cat = await this.catsRepository.findOne({
+      where: { id, userId: user.id },
+    });
     if (!cat) {
       throw new HttpException('Cat not found', HttpStatus.NOT_FOUND);
     }
