@@ -56,12 +56,16 @@ export class CatsController {
   update(
     @Body() updateCatDto: UpdateCatDto,
     @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: UserEntity,
   ): Promise<CatEntity> {
-    return this.catsService.updateSer(id, updateCatDto);
+    return this.catsService.updateSer(id, updateCatDto, user);
   }
 
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.catsService.deleteSer(id);
+  delete(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: UserEntity,
+  ): Promise<void> {
+    return this.catsService.deleteSer(id, user);
   }
 }

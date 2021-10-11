@@ -71,17 +71,24 @@ export class CatsService {
     return cat;
   }
 
-  async updateSer(id: number, cat: UpdateCatDto): Promise<CatEntity> {
-    await this.catsRepository.update(id, cat);
-    const updateCat = await this.catsRepository.findOne(id);
-    if (!updateCat) {
-      throw new HttpException('Cat not found', HttpStatus.NOT_FOUND);
-    }
-    return updateCat;
+  async updateSer(
+    id: number,
+    cat: UpdateCatDto,
+    user: UserEntity,
+  ): Promise<CatEntity> {
+    const catFound = await this.getCatById(id, user);
+    catFound.name = cat.name !== undefined ? cat.name : catFound.name;
+    catFound.age = cat.age !== undefined ? cat.age : catFound.age;
+    catFound.breed = cat.breed !== undefined ? cat.breed : catFound.breed;
+    await catFound.save();
+    return catFound;
   }
 
-  async deleteSer(id: number): Promise<void> {
-    const deleteRes = await this.catsRepository.delete(id);
+  async deleteSer(id: number, user: UserEntity): Promise<void> {
+    const deleteRes = await this.catsRepository.delete({
+      id,
+      userId: user.id,
+    });
     if (!deleteRes.affected) {
       throw new NotFoundException(`Cat ${id} not found`);
     }
